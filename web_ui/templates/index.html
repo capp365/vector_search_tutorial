@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Answering bot</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        // ここにJavaScriptのコード
+    </script>
+</head>
+<body>
+    <h1>類似ドキュメント検索</h1>
+    <!-- テキストボックスと検索ボタンを追加 -->
+    <div class="input-container">
+        <textarea id="input-text" placeholder="クエリを入力" rows="4" cols="50"></textarea>
+        <button onclick="sendMessage()">検索</button>
+    </div>
+    <div class="chat-container">
+        <img src="{{ url_for('static', filename='nzm.jpg') }}" alt="Character Image" class="character-image">
+        <div class="speech-bubble" id="message-container"></div>
+    </div>
+
+
+    <script>
+        function displayMessage(message) {
+            var messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = ''; // メッセージボックスをクリア
+            var i = 0;
+            var interval = setInterval(function() {
+                if (i < message.length) {
+                    messageContainer.innerHTML += message.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 50); // 50ミリ秒ごとに一文字ずつ追加
+        }
+        function sendMessage() {
+            var inputText = document.getElementById('input-text').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/send_message", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    var response = JSON.parse(this.responseText);
+                    document.getElementById('message-container').innerHTML = response.result;
+                    displayMessage(response.result);
+                }
+            }
+            xhr.send("input_text=" + encodeURIComponent(inputText));
+        }
+    </script>
+</body>
+</html>

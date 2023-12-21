@@ -1,13 +1,23 @@
 import json
 from bs4 import BeautifulSoup
 import os
-import google.generativeai as palm
+#import google.generativeai as palm
+from vertexai.language_models import TextEmbeddingModel
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './cres.json'
-palm.configure()
+#palm.configure()
+#"models/embedding-gecko-001"
+#model = "models/embedding-gecko-multilingual-001"
+from google.cloud import aiplatform
+from google.oauth2 import service_account
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './cres.json'
 
-model = "models/embedding-gecko-001"
+credentials = service_account.Credentials.from_service_account_file('cres.json')
+
+aiplatform.init(credentials=credentials)
 
 
+
+model = TextEmbeddingModel.from_pretrained("textembedding-gecko-multilingual@001")
 
 def extract_text_from_html(html):
     soup = BeautifulSoup(html, 'lxml')
@@ -50,16 +60,18 @@ for item in data:
         if "extended_body" in item:
             lines +=extract_text_from_html(item["extended_body"])
         # 出力
-        for line in lines:
+        embeddings = model.get_embeddings(lines)
+        for line,embedding in zip(lines,embeddings):
             count+=len(line)
-            while(True):
-                try:
-                    embedding = palm.generate_embeddings(model=model, text=line)
-                    print(item['title'],line)
-                    output.append((item['title'],line,embedding))
-                    break
-                except:
-                    pass
+            #while(True):
+            #    try:
+
+            #embedding = palm.generate_embeddings(model=model, text=line)
+            print(item['title'],line)
+            output.append((item['title'],line,embedding.values))
+            #        break
+            #    except:
+            #        pass
 
 
 print(count)

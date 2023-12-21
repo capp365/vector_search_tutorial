@@ -1,0 +1,35 @@
+.chat-container {
+    display: flex;
+    align-items: center;
+}
+
+.character-image {
+    width: 100px; /* 画像のサイズ調整 */
+    height: auto;
+    margin-right: 10px; /* 画像と吹き出しの間隔 */
+}
+
+.speech-bubble {
+    position: relative;
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 10px;
+    min-width: 100px;
+    max-width: 300px; /* 吹き出しの最大幅 */
+    word-wrap: break-word;
+}
+
+.speech-bubble:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-right-color: #f0f0f0;
+    border-left: 0;
+    margin-top: -10px;
+    margin-left: -10px;
+}
+
