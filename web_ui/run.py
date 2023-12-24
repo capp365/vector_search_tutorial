@@ -17,7 +17,7 @@ def send_message():
 
 
 def process_input(input_text):
-    output_text=search(input_text,pattern='embeddings')
+    output_text=search(input_text,pattern='llm')
     return output_text
 
 if __name__ == '__main__':
